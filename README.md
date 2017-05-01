@@ -10,5 +10,5 @@ Space shooter iOS game
 
 <b>0.0.3</b> - Added multiple variatons of enemy ships and initial game level system
 
-<img src="https://github.com/mkowaleff/Galaxy-Shooter/blob/master/Game%20Screenshots/003a.PNG" alt="Title Screen" style="width:128px;height:128px;">
+<img src="https://github.com/mkowaleff/Galaxy-Shooter/blob/master/Game%20Screenshots/003a.PNG" alt="Title Screen" width="128" height="128">
 
