@@ -8,3 +8,5 @@ Space shooter iOS game
 
 <b>0.0.2</b> - Main menu, settings, profile screen present (not functioning)
 
+<b>0.0.3</b> - Added multiple variatons of enemy ships and initial game level system
+
