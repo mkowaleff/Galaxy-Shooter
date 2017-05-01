@@ -2,8 +2,9 @@
 Space shooter iOS game
 
 
-Changelog:
-0.0.1 - Game has basic functionality, player/enemy/bullet interactions, high score
+<b><u>Changelog:</u></b>
 
-0.0.2 - Main menu, settings, profile screen present (not functioning)
+<b>0.0.1</b> - Game has basic functionality, player/enemy/bullet interactions, high score
+
+<b>0.0.2</b> - Main menu, settings, profile screen present (not functioning)
 
