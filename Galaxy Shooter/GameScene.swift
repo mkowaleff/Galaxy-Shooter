@@ -285,13 +285,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // If  bullet has hit enemy
         if (body1.categoryBitMask == PhysicsCategories.Bullet &&
-            body2.categoryBitMask == PhysicsCategories.Enemy &&
-            (body2.node?.position.y)! <  self.size.height){
+            body2.categoryBitMask == PhysicsCategories.Enemy){
             
             addScore()
             
+            
+            
             if(body2.node != nil){
-               spawnExplosion(spawnPosition: body2.node!.position)
+                if(body2.node!.position.y > self.size.height){
+                   return
+                }
+                else{
+                    spawnExplosion(spawnPosition: body2.node!.position)
+                }
             }
             
             body1.node?.removeFromParent()
@@ -300,6 +306,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
     }
+
     
     
     func spawnExplosion(spawnPosition: CGPoint){
