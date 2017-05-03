@@ -9,12 +9,21 @@
 import Foundation
 import SpriteKit
 
+var highScoreNumber         = UserDefaults().integer(forKey: "highScoreSaved")
+var accumulatedCoins        = UserDefaults().integer(forKey: "accumulatedCoins")
+
 class GameOverScene: SKScene{
     
     let restartLabel            = SKLabelNode(fontNamed: "MarketDeco")
     let profileLabel            = SKLabelNode(fontNamed: "MarketDeco")
     let settingsLabel           = SKLabelNode(fontNamed: "MarketDeco")
     let mainMenuLabel           = SKLabelNode(fontNamed: "MarketDeco")
+    let shopLabel               = SKLabelNode(fontNamed: "MarketDeco")
+    let coinsLabel              = SKLabelNode(fontNamed: "MarketDeco")
+    
+    
+    //var highScoreNumber         = UserDefaults().integer(forKey: "highScoreSaved")
+    //var accumulatedCoins        = UserDefaults().integer(forKey: "accumulatedCoins")
     
     
     override func didMove(to view: SKView) {
@@ -42,14 +51,27 @@ class GameOverScene: SKScene{
         scoreLabel.zPosition        = 1
         self.addChild(scoreLabel)
         
+        coinsLabel.text              = "🔸\(gameCoins)"
+        coinsLabel.fontSize          = 70
+        coinsLabel.fontColor         = SKColor.white
+        coinsLabel.position          = CGPoint(x: self.size.width*0.15, y: self.size.height*0.95)
+        coinsLabel.zPosition         = 1
+        coinsLabel.horizontalAlignmentMode  = SKLabelHorizontalAlignmentMode.left
+        self.addChild(coinsLabel)
+
+        
         // Profile stuff should be saved in a similar way!!!
-        let defaults                = UserDefaults()
-        var highScoreNumber         = defaults.integer(forKey: "highScoreSaved")
+        //let defaults                = UserDefaults()
+        //var highScoreNumber         = defaults.integer(forKey: "highScoreSaved")
         
         if(gameScore > highScoreNumber){
             highScoreNumber = gameScore
-            defaults.set(highScoreNumber, forKey: "highScoreSaved")
+            UserDefaults().set(highScoreNumber, forKey: "highScoreSaved")
         }
+        
+        //var accumulatedCoins        = defaults.integer(forKey: "accumulatedCoins")
+        accumulatedCoins = gameCoins
+        UserDefaults().set(accumulatedCoins, forKey: "accumulatedCoins")
         
         //  -------------
         
@@ -91,6 +113,13 @@ class GameOverScene: SKScene{
         settingsLabel.zPosition      = 1
         self.addChild(settingsLabel)
         
+        shopLabel.text              = "Shop"
+        shopLabel.fontSize          = 75
+        shopLabel.fontColor         = SKColor.white
+        shopLabel.position          = CGPoint(x: self.size.width/2, y: self.size.height*0.1)
+        shopLabel.zPosition         = 1
+        self.addChild(shopLabel)
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -121,6 +150,13 @@ class GameOverScene: SKScene{
             
             if mainMenuLabel.contains(pointOfTouch){
                 let sceneToMoveTo           = MainMenuScene(size: self.size)
+                sceneToMoveTo.scaleMode     = self.scaleMode
+                let myTransition            = SKTransition.fade(withDuration: 0.5)
+                self.view!.presentScene(sceneToMoveTo, transition: myTransition)
+            }
+            
+            if shopLabel.contains(pointOfTouch){
+                let sceneToMoveTo           = ShopScene(size: self.size)
                 sceneToMoveTo.scaleMode     = self.scaleMode
                 let myTransition            = SKTransition.fade(withDuration: 0.5)
                 self.view!.presentScene(sceneToMoveTo, transition: myTransition)
