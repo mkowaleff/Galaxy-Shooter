@@ -16,6 +16,8 @@ class ProfileScene: SKScene{
     let shipStyleLabel          = SKLabelNode(fontNamed: "MarketDeco")
     let backgroundLabel         = SKLabelNode(fontNamed: "MarketDeco")
     
+    var currentColor = "Red"
+    
     override func didMove(to view: SKView) {
         // this code runs as soon as we move to this scene
         
@@ -33,26 +35,26 @@ class ProfileScene: SKScene{
         backLabel.horizontalAlignmentMode  = SKLabelHorizontalAlignmentMode.left
         self.addChild(backLabel)
         
-        colorLabel.text              = "Color: Red"
-        colorLabel.fontSize          = 80
+        colorLabel.text              = "Color: \(currentColor)"
+        colorLabel.fontSize          = 90
         colorLabel.fontColor         = SKColor.white
-        colorLabel.position          = CGPoint(x: self.size.width*0.2, y: self.size.height*0.6)
+        colorLabel.position          = CGPoint(x: self.size.width*0.2, y: self.size.height*0.7)
         colorLabel.zPosition         = 1
         colorLabel.horizontalAlignmentMode  = SKLabelHorizontalAlignmentMode.left
         self.addChild(colorLabel)
         
         shipStyleLabel.text          = "Style: Default"
-        shipStyleLabel.fontSize      = 80
+        shipStyleLabel.fontSize      = 90
         shipStyleLabel.fontColor     = SKColor.white
-        shipStyleLabel.position      = CGPoint(x: self.size.width*0.2, y: self.size.height*0.55)
+        shipStyleLabel.position      = CGPoint(x: self.size.width*0.2, y: self.size.height*0.6)
         shipStyleLabel.zPosition     = 1
         shipStyleLabel.horizontalAlignmentMode  = SKLabelHorizontalAlignmentMode.left
         self.addChild(shipStyleLabel)
         
         backgroundLabel.text          = "Background: Sky"
-        backgroundLabel.fontSize      = 80
+        backgroundLabel.fontSize      = 90
         backgroundLabel.fontColor     = SKColor.white
-        backgroundLabel.position      = CGPoint(x: self.size.width*0.2, y: self.size.height*0.50)
+        backgroundLabel.position      = CGPoint(x: self.size.width*0.2, y: self.size.height*0.5)
         backgroundLabel.zPosition     = 1
         backgroundLabel.horizontalAlignmentMode  = SKLabelHorizontalAlignmentMode.left
         self.addChild(backgroundLabel)
@@ -71,6 +73,20 @@ class ProfileScene: SKScene{
                 sceneToMoveTo.scaleMode     = self.scaleMode
                 let myTransition            = SKTransition.fade(withDuration: 0.5)
                 self.view!.presentScene(sceneToMoveTo, transition: myTransition)
+            }
+            
+            if colorLabel.contains(pointOfTouch){
+                if(currentColor == "Red"){
+                    currentColor = "Green"
+                }
+                else if(currentColor == "Green"){
+                    currentColor = "Blue"
+                }
+                else if(currentColor == "Blue"){
+                    currentColor = "Red"
+                }
+                
+                colorLabel.text = "Color: \(currentColor)"
             }
         }
     }
