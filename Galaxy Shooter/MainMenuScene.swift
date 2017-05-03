@@ -9,13 +9,28 @@
 import Foundation
 import SpriteKit
 
+var startingLives           = 3
+
 class MainMenuScene: SKScene{
+    
+    let defaults                = UserDefaults()
+    //var startingLives           = 3
+    
   
     let startGameLabel          = SKLabelNode(fontNamed: "MarketDeco")
     let profileLabel            = SKLabelNode(fontNamed: "MarketDeco")
     let settingsLabel           = SKLabelNode(fontNamed: "MarketDeco")
+    let shopLabel               = SKLabelNode(fontNamed: "MarketDeco")
+    let coinsLabel              = SKLabelNode(fontNamed: "MarketDeco")
     
     override func didMove(to view: SKView) {
+        
+        
+        var startingLivesDef = defaults.integer(forKey: "startingLives")
+        if(startingLives > startingLivesDef){
+            startingLivesDef = startingLives
+            defaults.set(startingLivesDef, forKey: "startingLives")
+        }
         // this code runs as soon as we move to this scene
         
         let background              = SKSpriteNode(imageNamed: "bg1")
@@ -72,6 +87,20 @@ class MainMenuScene: SKScene{
         settingsLabel.zPosition      = 1
         self.addChild(settingsLabel)
         
+        shopLabel.text              = "Shop"
+        shopLabel.fontSize          = 150
+        shopLabel.fontColor         = SKColor.white
+        shopLabel.position          = CGPoint(x: self.size.width/2, y: self.size.height*0.175)
+        shopLabel.zPosition         = 1
+        self.addChild(shopLabel)
+        
+        coinsLabel.text              = "🔸\(gameCoins)"
+        coinsLabel.fontSize          = 70
+        coinsLabel.fontColor         = SKColor.white
+        coinsLabel.position          = CGPoint(x: self.size.width*0.15, y: self.size.height*0.95)
+        coinsLabel.zPosition         = 1
+        coinsLabel.horizontalAlignmentMode  = SKLabelHorizontalAlignmentMode.left
+        self.addChild(coinsLabel)
         
         
         
@@ -105,6 +134,13 @@ class MainMenuScene: SKScene{
             
             if settingsLabel.contains(pointOfTouch){
                 let sceneToMoveTo           = SettingsScene(size: self.size)
+                sceneToMoveTo.scaleMode     = self.scaleMode
+                let myTransition            = SKTransition.fade(withDuration: 0.5)
+                self.view!.presentScene(sceneToMoveTo, transition: myTransition)
+            }
+            
+            if shopLabel.contains(pointOfTouch){
+                let sceneToMoveTo           = ShopScene(size: self.size)
                 sceneToMoveTo.scaleMode     = self.scaleMode
                 let myTransition            = SKTransition.fade(withDuration: 0.5)
                 self.view!.presentScene(sceneToMoveTo, transition: myTransition)
