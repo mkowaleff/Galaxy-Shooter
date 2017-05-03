@@ -23,7 +23,7 @@ Space shooter iOS game
 
 <b>0.0.5</b>
 - Added pause button
-- Basic currency system
+- Implemented basic currency system
 - Added shop page
 - Added language page
 - Starting level in settings
