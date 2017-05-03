@@ -10,17 +10,20 @@ import SpriteKit
 import GameplayKit
 
 var gameScore       = 0
+var gameCoins       = UserDefaults().integer(forKey: "accumulatedCoins")
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     var levelNumber     = 0
-    var livesNumber     = 3
+    var livesNumber     = UserDefaults().integer(forKey: "startingLives")
     
     var levelLabel      = SKLabelNode(fontNamed: "MarketDeco")
     var livesLabel      = SKLabelNode(fontNamed: "MarketDeco")
     let tapToStartLabel = SKLabelNode(fontNamed: "MarketDeco")
     let scoreLabel      = SKLabelNode(fontNamed: "MarketDeco")
+    let coinsLabel      = SKLabelNode(fontNamed: "MarketDeco")
+    let pauseLabel      = SKLabelNode(fontNamed: "MarketDeco")
     
     
     let player          = SKSpriteNode(imageNamed: "redship1")
@@ -44,6 +47,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         static let Player:  UInt32 = 0b1    //1
         static let Bullet:  UInt32 = 0b10   //2
         static let Enemy:   UInt32 = 0b100  //4
+        static let Planet:  UInt32 = 0b1000 //8
     }
     
     // This makes sure that the player doesn't go off screen
@@ -86,7 +90,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         // Moved declaration outside of function so it can be referenced from fireBullet
-        player.setScale(1)
+        player.setScale(1.5)
         player.position                         = CGPoint(x: self.size.width/2, y: 0 - player.size.height)
         player.zPosition                        = 2
         
@@ -105,7 +109,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel.zPosition                = 100
         self.addChild(scoreLabel)
         
-        livesLabel.text                     = "Lives: 3"
+        livesLabel.text                     = "Lives: \(livesNumber)"
         livesLabel.fontSize                 = 70
         livesLabel.fontColor                = SKColor.white
         livesLabel.horizontalAlignmentMode  = SKLabelHorizontalAlignmentMode.right
@@ -121,10 +125,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         levelLabel.zPosition                = 100
         self.addChild(levelLabel)
         
+        coinsLabel.text                     = "🔸\(gameCoins)"
+        coinsLabel.fontSize                 = 70
+        coinsLabel.fontColor                = SKColor.white
+        coinsLabel.position                 = CGPoint(x: self.size.width*0.15, y: self.size.height*0.95)
+        coinsLabel.zPosition                = 100
+        coinsLabel.horizontalAlignmentMode  = SKLabelHorizontalAlignmentMode.left
+        self.addChild(coinsLabel)
+        
+        pauseLabel.text              = "⏯"
+        pauseLabel.fontSize          = 70
+        pauseLabel.fontColor         = SKColor.white
+        pauseLabel.position          = CGPoint(x: self.size.width*0.85, y: self.size.height*0.95)
+        pauseLabel.zPosition         = 100
+        pauseLabel.horizontalAlignmentMode  = SKLabelHorizontalAlignmentMode.right
+        self.addChild(pauseLabel)
+        
         let moveOntoScreenAction               = SKAction.moveTo(y: self.size.height*0.9, duration: 0.3)
         scoreLabel.run(moveOntoScreenAction)
         livesLabel.run(moveOntoScreenAction)
         levelLabel.run(moveOntoScreenAction)
+        //coinsLabel.run(moveOntoScreenAction)
         
         tapToStartLabel.text                    = "Start Game"
         tapToStartLabel.fontSize                = 100
@@ -199,8 +220,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if (livesNumber == 0){
             runGameOver()
         }
+    }
+    
+    func gainALife(){
+        livesNumber        += 1
+        livesLabel.text     = "Lives: \(livesNumber)"
         
+        let scaleUp         = SKAction.scale(to: 1.25, duration: 0.2)
+        let scaleDown       = SKAction.scale(to: 1.0, duration: 0.2)
+        let scaleSequence   = SKAction.sequence([scaleUp, scaleDown])
+        livesLabel.run(scaleSequence)
         
+    }
+    
+    func gainACoin(){
+        gameCoins          += 1
+        coinsLabel.text     = "🔸\(gameCoins)"
+        
+        let scaleUp         = SKAction.scale(to: 1.25, duration: 0.2)
+        let scaleDown       = SKAction.scale(to: 1.0, duration: 0.2)
+        let scaleSequence   = SKAction.sequence([scaleUp, scaleDown])
+        coinsLabel.run(scaleSequence)
     }
     
     
@@ -208,7 +248,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gameScore += 1
         scoreLabel.text = "Score: \(gameScore)"
         
+        if(gameScore%5 == 0){
+            gainACoin()
+        }
+        
         if(gameScore%10 == 0){
+            gainALife()
             startNewLevel()
         }
     }
@@ -306,7 +351,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
     }
-
     
     
     func spawnExplosion(spawnPosition: CGPoint){
@@ -375,6 +419,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bullet.run(bulletSequence)
     }
     
+    
+    
+    
+    
+    /*func fireHomingBullet(){
+        let bullet2                              = SKSpriteNode(imageNamed: "bluebullet1")
+        bullet2.name                             = "Bullet2"
+        bullet2.setScale(1)
+        bullet2.position                         = player.position
+        bullet2.zPosition                        = 1
+        
+        bullet2.physicsBody                      = SKPhysicsBody(rectangleOf: bullet2.size)
+        bullet2.physicsBody!.affectedByGravity   = false
+        bullet2.physicsBody!.categoryBitMask     = PhysicsCategories.Bullet
+        bullet2.physicsBody!.collisionBitMask    = PhysicsCategories.None    // bullet can't collide
+        bullet2.physicsBody!.contactTestBitMask  = PhysicsCategories.Enemy   // bullet can hit enemy
+        
+        let enemyLocation: CGPoint = self.childNode(withName: "Enemy")!.position
+        
+        self.addChild(bullet2)
+        
+        let moveBullet      = SKAction.move(to: enemyLocation, duration: 0.5)
+        let deleteBullet    = SKAction.removeFromParent()
+        let bulletSequence  = SKAction.sequence([bulletSound, moveBullet, deleteBullet])
+        bullet2.run(bulletSequence)
+    }*/
+    
     func pickRandomImage() -> UInt32{
         let randomNum:UInt32 = arc4random_uniform(19)
         return randomNum
@@ -390,7 +461,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let enemy                               = SKSpriteNode(imageNamed: "\(pickRandomImage())")
         enemy.name                              = "Enemy"
-        enemy.setScale(1)
+        enemy.setScale(1.5)
         enemy.position                          = startPoint
         enemy.zPosition                         = 2
         
@@ -403,7 +474,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         self.addChild(enemy)
         
-        let moveEnemy       = SKAction.move(to: endPoint, duration: 3)
+        let moveEnemy       = SKAction.move(to: endPoint, duration: 5)
         let deleteEnemy     = SKAction.removeFromParent()
         let loseALifeAction = SKAction.run(loseALife)
         let enemySequence   = SKAction.sequence([moveEnemy, deleteEnemy, loseALifeAction])
@@ -430,6 +501,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch: AnyObject in touches{
+            let pointOfTouch        = touch.location(in: self)
+            
+            if pauseLabel.contains(pointOfTouch){
+                
+                if(self.view!.isPaused == false){
+                    self.view!.isPaused = true
+                }
+                else if(self.view!.isPaused == true){
+                    self.view!.isPaused = false
+                    
+                }
+            }
+            
+            
+        }
        
         if(currentGameState == gameState.preGame){
             startGame()
